@@ -1,0 +1,79 @@
+name: test_ALKDN_x3_lkc9C64B8_L1_1000k
+suffix: ~  # add suffix to saved images
+model_type: SRModel
+scale: 3
+crop_border: ~  # crop border when evaluation. If None, crop the scale pixels
+num_gpu: 1  # set num_gpu: 0 for cpu mode
+manual_seed: 0
+
+datasets:
+  test_1: # the 1st test dataset
+    name: val_set5
+    type: PairedImageDataset
+    dataroot_gt: /root/tmp/experiments/datasets/Benchmark/Set5/HR
+    dataroot_lq: /root/tmp/experiments/datasets/Benchmark/Set5/LR_bicubic/X3
+    io_backend:
+      type: disk
+  test_2: # the 2st test dataset
+    name: val_set14
+    type: PairedImageDataset
+    dataroot_gt: /root/tmp/experiments/datasets/Benchmark/Set14/HR
+    dataroot_lq: /root/tmp/experiments/datasets/Benchmark/Set14/LR_bicubic/X3
+    io_backend:
+      type: disk
+
+  test_3:
+    name: BSD100
+    type: PairedImageDataset
+    dataroot_gt: /root/tmp/experiments/datasets/Benchmark/B100/HRx3
+    dataroot_lq: /root/tmp/experiments/datasets/Benchmark/B100/LR_bicubic/X3
+    io_backend:
+      type: disk
+
+  test_4:
+    name: Urban100
+    type: PairedImageDataset
+    dataroot_gt: /root/tmp/experiments/datasets/Benchmark/Urban100/HR
+    dataroot_lq: /root/tmp/experiments/datasets/Benchmark/Urban100/LR_bicubic/X3
+    io_backend:
+      type: disk
+
+  test_5:
+    name: Manga109
+    type: PairedImageDataset
+    dataroot_gt: /root/tmp/experiments/datasets/Benchmark/Manga109/HR
+    dataroot_lq: /root/tmp/experiments/datasets/Benchmark/Manga109/LR_bicubic/X3
+    io_backend:
+      type: disk
+
+
+# network structures
+network_g:
+  type: ALKDN
+  num_in_ch: 3
+  num_feat: 64
+  num_block: 8
+  num_out_ch: 3
+  upscale: 3
+  conv: LargeKernelConv
+  lk_size: 9
+
+# path
+path:
+  pretrain_network_g: /root/tmp/experiments/ALKDN/experiments/pretrained_BSRNlk2nn_models/net_g_ALKDN_x3.pth
+  strict_load_g: true
+
+# validation settings
+val:
+  save_img: true
+  suffix: ~  # add suffix to saved images, if None, use exp name
+  pbar: true
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 3
+      test_y_channel: true
+    ssim:
+      type: calculate_ssim
+      crop_border: 3
+      test_y_channel: true
